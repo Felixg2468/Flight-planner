@@ -52,7 +52,7 @@ else:
       if total_fare < min_fare:
         min_fare = total_fare
         best_connection = connection
-    print("Connnecting flight found through " + best_connection[0] + " and " + best_connection[1] + ", fare: " + min_fare)
+    print("Connnecting flight found through " + best_connection[0] + " and " + best_connection[1] + ", fare: " + str(min_fare))
   else:
     print("No direct flight found between " + city1 + city2)
 
@@ -84,8 +84,19 @@ if not cityFound:
 #G.add_nodes_from([1, 2, 3, 4])
 G.add_edges_from([(1,2),(1,3),(4,1),(2,4)])
 
-nx.draw(G, with_labels=True, font_weight='bold')
+pos_spaced = nx.fruchterman_reingold_layout(G, k=0.5, iterations=100)
+plt.figure(figsize=(6,10)) # 6x10 inches
+nx.draw(G, pos=pos_spaced, with_labels=True) 
+nx.draw_networkx_edge_labels(G, pos_spaced,
+              edge_labels = nx.get_edge_attributes(G,"weight"))
+plt.show(block=False)
+
+
+
+
+
+'''nx.draw(G, with_labels=True, font_weight='bold')
 nx.draw_networkx_edge_labels(G,  nx.spring_layout(G), edge_labels = nx.get_edge_attributes(G, "weight"))
 
 
-plt.show()
+plt.show()'''
