@@ -36,7 +36,25 @@ if G.has_edge(city1, city2):
   nx.draw_networkx_edge_labels(G_path, position, edge_labels=nx.get_edge_attributes(G_path, "weight"))
   plt.show()
 else:
-  print("No direct flight found between " + city1 + city2)
+  connections = []
+  for connections in G.neighbors(city1):
+    for destination in G.neighbors(connections):
+      if G.has_edge(connections, destination) and G.has_edge(destination, city2):
+        connections.append((connections, destination))
+
+  if connections:
+    min_flare = float("inf")
+    for connection in connections:
+      fare1 = G[city1][connection[0]]['weight']
+      fare2 = G[connection[0]][connection[1]]['weight']
+      fare3 = G[connection[1]][city2]['weight']
+      total_fare = fare1 + fare2 + fare3
+      if total_fare < min_fare:
+        min_fare = total_fare
+        best_connection = connection
+    print("Connnecting flight found through " + best_connection[0] + " and " + best_connection[1] + ", fare: " + min_fare)
+  else:
+    print("No direct flight found between " + city1 + city2)
 
 
 #------------------------------
