@@ -18,7 +18,7 @@ G = nx.DiGraph()
 for flight in flights:
     city1 = flight["city1"]
     city2 = flight["city2"]
-    fare = flight["fare"]
+    fare = float(flight["fare"])
     #print("Flight from " + city1 + " to " + city2)
     G.add_edge(city1, city2, weight=fare)
 
@@ -37,13 +37,13 @@ if G.has_edge(city1, city2):
   plt.show()
 else:
   connections = []
-  for connections in G.neighbors(city1):
-    for destination in G.neighbors(connections):
-      if G.has_edge(connections, destination) and G.has_edge(destination, city2):
-        connections.append((connections, destination))
+  for connection in G.neighbors(city1):
+    for destination in G.neighbors(connection):
+      if G.has_edge(connection, destination) and G.has_edge(destination, city2):
+        connections.append((connection, destination))
 
   if connections:
-    min_flare = float("inf")
+    min_fare = float("inf")
     for connection in connections:
       fare1 = G[city1][connection[0]]['weight']
       fare2 = G[connection[0]][connection[1]]['weight']
