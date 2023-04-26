@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from urllib.request import urlopen
 import json
+import tkinter as tk
+import tkinter.messagebox
 
 
 file = urlopen("https://data.transportation.gov/resource/4f3n-jbg2.json?year=2022")
@@ -23,9 +25,10 @@ for flight in flights:
     G.add_edge(city1, city2, weight=fare)
 
 city1 = input("Enter first city: ")
-city2 = input("Enter destination city: ")
+city2 = input("Enter second city: ")
 
 cityFound = False
+
 
 if G.has_edge(city1, city2):
   price = G[city1][city2]["weight"]
@@ -35,7 +38,7 @@ if G.has_edge(city1, city2):
   nx.draw(G_path, position, with_labels=True, font_weight='bold')
   nx.draw_networkx_edge_labels(G_path, position, edge_labels=nx.get_edge_attributes(G_path, "weight"))
   plt.show()
-else:
+else: #Non-direct flights
   connections = []
   for connection in G.neighbors(city1):
     for destination in G.neighbors(connection):
@@ -52,13 +55,13 @@ else:
       if total_fare < min_fare:
         min_fare = total_fare
         best_connection = connection
-    print("Connnecting flight found through " + best_connection[0] + " and " + best_connection[1] + ", fare: " + str(min_fare))
+    print("Connnecting flight found through " + best_connection[0] + " and " + best_connection[1] + ", fare: $" + str(min_fare))
   else:
     print("No direct flight found between " + city1 + city2)
 
 
 #------------------------------
-#Non-direct flights
+
 
 
   
