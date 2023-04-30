@@ -39,6 +39,10 @@ def button1Click():
   print("Button clicked")
   city1 = entry1.get()
   city2 = entry2.get()
+
+  
+
+
   
   
 
@@ -51,25 +55,29 @@ def button1Click():
       nx.draw_networkx_edge_labels(G_path, position, edge_labels=nx.get_edge_attributes(G_path, "weight"))
       plt.show()
   else: #Non-direct flights
-      connections = []
-      for connection in G.neighbors(city1):
-        for destination in G.neighbors(connection):
-          if G.has_edge(connection, destination) and G.has_edge(destination, city2):
-            connections.append((connection, destination))
-    
-      if connections:
-        min_fare = float("inf")
-        for connection in connections:
-          fare1 = G[city1][connection[0]]['weight']
-          fare2 = G[connection[0]][connection[1]]['weight']
-          fare3 = G[connection[1]][city2]['weight']
-          total_fare = fare1 + fare2 + fare3
-          if total_fare < min_fare:
-            min_fare = total_fare
-            best_connection = connection
-        tkinter.messagebox.showinfo("Connnecting flight found through " + best_connection[0] + " and " + best_connection[1] + ", fare: $" + str(min_fare))
-      else:
-        tkinter.messagebox.showinfo("No direct flight found between " + city1 + " and " + city2)
+    connections = []
+    min_fare = float("inf")
+    for connection in G.neighbors(city1):
+      for destination in G.neighbors(connection):
+        if G.has_edge(connection, destination):
+          path = nx.shortest_path(G, source=city1, target=city2, weight='weight')
+          if city1 in path and city2 in path:
+                    fare = sum(G[path[i]][path[i+1]]['weight'] for i in range(len(path)-1))
+                    if fare < min_fare:
+                        min_fare = fare
+                        best_path = path
+    if min_fare != float("inf"):
+        tkinter.messagebox.showinfo("Connecting flight found through " + ", ".join(best_path) + ", fare: $" + str(min_fare))
+        G_path = nx.DiGraph()
+        G_path.add_weighted_edges_from([(best_path[i], best_path[i+1], G[best_path[i]][best_path[i+1]]['weight']) for i in range(len(best_path)-1)])
+        position = nx.spring_layout(G_path)
+        nx.draw(G_path, position, with_labels=True, font_weight='bold')
+        nx.draw_networkx_edge_labels(G_path, position, edge_labels=nx.get_edge_attributes(G_path, "weight"))
+        plt.show()
+    else:
+        tkinter.messagebox.showinfo("No flight found between " + city1 + " and " + city2)
+          
+        
 
 
     
